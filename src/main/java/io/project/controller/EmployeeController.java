@@ -19,7 +19,7 @@ public class EmployeeController {
     @Autowired
     private EmployeeService employeeService;
 
-    @GetMapping(path = "")
+    @GetMapping()
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<List<EmployeeDTO>> showAll() {
         var list = employeeService.getAll();
