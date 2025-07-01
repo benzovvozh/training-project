@@ -1,13 +1,13 @@
-package io.project.DTO;
+package io.project.DTO.emp;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class ClientDTO {
+public class EmployeeDTO {
     private String firstName;
     private String lastName;
     private String email;
-    private String telephoneNumber;
+    private String role;
 }

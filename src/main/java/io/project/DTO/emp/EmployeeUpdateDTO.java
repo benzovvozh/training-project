@@ -1,4 +1,4 @@
-package io.project.DTO;
+package io.project.DTO.emp;
 
 import io.project.model.EmployeeRole;
 import jakarta.validation.constraints.Email;

@@ -1,4 +1,4 @@
-package io.project.DTO;
+package io.project.DTO.client;
 
 import jakarta.validation.constraints.Email;
 import lombok.Getter;

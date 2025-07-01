@@ -1,8 +1,8 @@
 package io.project.mapper;
 
-import io.project.DTO.ClientCreateDTO;
-import io.project.DTO.ClientDTO;
-import io.project.DTO.ClientUpdateDTO;
+import io.project.DTO.client.ClientCreateDTO;
+import io.project.DTO.client.ClientDTO;
+import io.project.DTO.client.ClientUpdateDTO;
 import io.project.model.Client;
 import org.mapstruct.*;
 

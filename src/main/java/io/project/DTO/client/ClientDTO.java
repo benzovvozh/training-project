@@ -1,16 +1,13 @@
-package io.project.DTO;
+package io.project.DTO.client;
 
-import jakarta.validation.constraints.Email;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class ClientCreateDTO {
+public class ClientDTO {
     private String firstName;
     private String lastName;
-    @Email
     private String email;
     private String telephoneNumber;
-
 }

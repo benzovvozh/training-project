@@ -1,30 +1,34 @@
 package io.project.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import io.project.mapper.BaseEntity;
+import jakarta.persistence.*;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
-@Entity
-@Table(name = "orders")
+@Entity // помечаем как сущность
+@Table(name = "orders") //создаём таблицу с названием
 @Getter
 @Setter
-@AllArgsConstructor
+@EntityListeners(AuditingEntityListener.class) // аннотация для автоматического заполнения полей по типу дата создания
+@AllArgsConstructor // конструкторы
 @NoArgsConstructor
-public class Order {
+public class Order implements BaseEntity {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @CreatedDate
     private LocalDate createdAt;
+    @Enumerated(EnumType.STRING)
     private OrderStatus status;
-
-    @ManyToOne()
+    //владелец связи с клиентом
+    @ManyToOne
     private Client client;
+
+    @ManyToMany(mappedBy = "orders")
+    private List<Product> products = new ArrayList<>();
 }

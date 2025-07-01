@@ -1,8 +1,8 @@
 package io.project.controller;
 
-import io.project.DTO.ClientCreateDTO;
-import io.project.DTO.ClientDTO;
-import io.project.DTO.ClientUpdateDTO;
+import io.project.DTO.client.ClientCreateDTO;
+import io.project.DTO.client.ClientDTO;
+import io.project.DTO.client.ClientUpdateDTO;
 import io.project.service.ClientService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

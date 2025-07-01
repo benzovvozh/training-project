@@ -1,8 +1,8 @@
 package io.project.service;
 
-import io.project.DTO.EmployeeCreateDTO;
-import io.project.DTO.EmployeeDTO;
-import io.project.DTO.EmployeeUpdateDTO;
+import io.project.DTO.emp.EmployeeCreateDTO;
+import io.project.DTO.emp.EmployeeUpdateDTO;
+import io.project.DTO.emp.EmployeeDTO;
 import io.project.mapper.EmployeeMapper;
 import io.project.model.Employee;
 import io.project.repository.EmployeeRepository;
