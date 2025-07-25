@@ -4,11 +4,15 @@ import io.project.DTO.client.ClientCreateDTO;
 import io.project.DTO.client.ClientDTO;
 import io.project.DTO.client.ClientUpdateDTO;
 import io.project.mapper.ClientMapper;
+import io.project.model.Client;
 import io.project.repository.ClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ClientService {
@@ -18,11 +22,12 @@ public class ClientService {
     @Autowired
     private ClientMapper mapper;
 
-    public List<ClientDTO> getAll() {
-        var list = repository.findAll().stream()
-                .map(mapper::map)
-                .toList();
-        return list;
+    public List<ClientDTO> getClientsByFirstName(String firstName, Pageable paging) {
+        Page<Client> page = firstName == null
+                ? repository.findAll(paging)
+                : repository.findClientByFirstName(firstName, paging);
+        return page.map(mapper::map).getContent();
+
     }
 
     public ClientDTO create(ClientCreateDTO clientCreateDTO) {

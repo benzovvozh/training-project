@@ -25,11 +25,8 @@ public class Product {
     private String description;
     private Integer price;
 
-    /*
-    делаем владельцем (не указываем mappedBy) связи с заказами
-    потому что, если мы удаляем продукт -> то должен удалиться заказ
-     */
-    @ManyToMany
+
+    @ManyToMany(mappedBy = "products")
     private List<Order> orders = new ArrayList<>();
 
 }

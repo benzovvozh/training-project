@@ -14,5 +14,5 @@ import java.util.List;
 public class OrderCreateDTO {
     private Long clientId;
     private OrderStatus status;
-    private List<Long> productsIds;
+    private List<Long> productsId;
 }

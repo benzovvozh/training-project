@@ -6,6 +6,7 @@ import io.project.DTO.client.ClientUpdateDTO;
 import io.project.service.ClientService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,10 +21,11 @@ public class ClientController {
 
     @GetMapping()
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<List<ClientDTO>> showAll() {
-        var list = service.getAll();
-        return ResponseEntity.ok()
-                .body(list);
+    public ResponseEntity<List<ClientDTO>> showAll(@RequestParam(required = false) String firstName,
+                                                   @RequestParam(defaultValue = "0") int page,
+                                                   @RequestParam(defaultValue = "5") int limit) {
+        var result = service.getClientsByFirstName(firstName, PageRequest.of(page, limit));
+        return ResponseEntity.ok().body(result);
     }
 
     @GetMapping("/{id}")

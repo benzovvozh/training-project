@@ -30,38 +30,40 @@ public abstract class OrderMapper {
     @Autowired
     private ClientRepository clientRepository;
 
-    //target = "client" - указываем, поле client в классе Order
-    //source = "clientId" - указываем поле clientId в createDTO
-    //используем кастомный метод преобразования, чтобы преобразовать id клиента в самого клиента
-    @Mapping(target = "client", source = "clientId", qualifiedByName = "idToEntity")
-    @Mapping(target = "products", source = "productsIds", qualifiedByName = "forProducts")
+    //игнорируем этот маппинг и используем свой с преобразованием ид клиента и продуктов в сущности
+    @Mapping(target = "client", ignore = true)
+    @Mapping(target = "products", ignore = true)
     public abstract Order map(OrderCreateDTO createDTO);
-
-    //кастомный метод преобразования
-    @Named("idToEntity")
-    public Client mapClientIdToClient(Long clientId) {
-        return clientRepository.findById(clientId).orElseThrow();
-    }
-
-    // конвертируем список айдишек продуктов в список продуктов
-    @Named("forProducts")
-    public List<Product> mapProductIdToProduct(List<Long> productsIds) {
-        if (productsIds != null) {
-            var result = productsIds.stream()
-                    .map(productId ->
-                            productRepository.findById(productId).orElseThrow())
-                    .toList();
-            return result;
-        } else return new ArrayList<>();
-    }
 
     // ПОЧЕМУ CLIENT.ID ??????????
     @Mapping(target = "clientId", source = "client.id")
-    @Mapping(target = "productsIds", source = "products", qualifiedByName = "forProducts2")
+    @Mapping(target = "productsId", source = "products", qualifiedByName = "modelToId")
     public abstract OrderDTO map(Order order);
 
+    public abstract void update(OrderUpdateDTO updateDTO, @MappingTarget Order order);
+
+    /*
+    сначала испульзуем базовый маппинг
+    потом ставим клиента с преобразованием из его айди
+    проверяем пустой ли список продуктов
+    проходимся по списку продуктов, преобразуя каждый из его айди и добавляем
+    */
+    public Order mapCreate(OrderCreateDTO orderCreateDTO) {
+        var order = map(orderCreateDTO);
+        order.setClient(clientRepository.findById(orderCreateDTO.getClientId()).orElseThrow());
+        if (orderCreateDTO.getProductsId() != null) {
+            var list = orderCreateDTO.getProductsId();
+            for (var productId : list) {
+                var product = productRepository.findById(productId).orElseThrow();
+                order.addProduct(product);
+            }
+        }
+        return order;
+    }
+
+
     // конвертируем список продуктов в список их идентификаторов
-    @Named("forProducts2")
+    @Named("modelToId")
     public List<Long> mapProductToProductIds(List<Product> products) {
         if (products != null) {
             var result = products.stream()
@@ -70,9 +72,6 @@ public abstract class OrderMapper {
             return result;
         } else return new ArrayList<>();
     }
-
-    @Mapping(target = "products", source = "productsIds",qualifiedByName = "forProducts")
-    public abstract void update(OrderUpdateDTO updateDTO, @MappingTarget Order order);
 
 
 }

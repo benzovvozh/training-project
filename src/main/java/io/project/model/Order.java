@@ -29,6 +29,21 @@ public class Order implements BaseEntity {
     @ManyToOne
     private Client client;
 
-    @ManyToMany(mappedBy = "orders")
+    @ManyToMany
+    @JoinTable(
+            name = "orders_products",
+            joinColumns = @JoinColumn(name = "order_id"),
+            inverseJoinColumns = @JoinColumn(name = "product_id")
+    )
     private List<Product> products = new ArrayList<>();
+
+    public void addProduct(Product product) {
+        this.products.add(product);
+        product.getOrders().add(this);
+    }
+
+    public void removeProduct(Product product) {
+        this.products.remove(product);
+        product.getOrders().remove(this);
+    }
 }

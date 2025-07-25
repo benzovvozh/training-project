@@ -6,6 +6,7 @@ import io.project.DTO.order.OrderUpdateDTO;
 import io.project.service.OrderService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,9 +20,13 @@ public class OrderController {
     private OrderService service;
 
     @GetMapping
-    public ResponseEntity<List<OrderDTO>> showAll() {
+    public ResponseEntity<List<OrderDTO>> showAll(
+            @RequestParam(required = false) String status,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int limit
+    ) {
         return ResponseEntity.ok()
-                .body(service.getAll());
+                .body(service.getOrdersByStatus(status, PageRequest.of(page, limit)));
     }
 
     @GetMapping("/{id}")

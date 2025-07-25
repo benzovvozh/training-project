@@ -14,5 +14,5 @@ public class OrderDTO {
     private LocalDate createdAt;
     private OrderStatus status;
     private Long clientId;
-    private List<Long> productsIds;
+    private List<Long> productsId;
 }

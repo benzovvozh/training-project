@@ -4,9 +4,16 @@ import io.project.DTO.order.OrderCreateDTO;
 import io.project.DTO.order.OrderDTO;
 import io.project.DTO.order.OrderUpdateDTO;
 import io.project.mapper.OrderMapper;
+import io.project.model.Order;
+import io.project.model.OrderStatus;
 import io.project.repository.OrderRepository;
+import io.project.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -16,12 +23,14 @@ public class OrderService {
     private OrderRepository repository;
     @Autowired
     private OrderMapper mapper;
+    @Autowired
+    private ProductRepository productRepository;
 
-    public List<OrderDTO> getAll() {
-        var order = repository.findAll().stream()
-                .map(mapper::map)
-                .toList();
-        return order;
+    public List<OrderDTO> getOrdersByStatus(String status, Pageable paging){
+        Page<Order> page = status == null
+                ? repository.findAll(paging)
+                : repository.findOrderByStatus(Enum.valueOf(OrderStatus.class, status), paging);
+        return page.map(mapper::map).getContent();
     }
 
     public OrderDTO show(Long id) {
@@ -34,13 +43,14 @@ public class OrderService {
     }
 
     public OrderDTO create(OrderCreateDTO createDTO) {
-        var order = mapper.map(createDTO);
+        var order = mapper.mapCreate(createDTO);
         repository.save(order);
         return mapper.map(order);
     }
-    public OrderDTO update(OrderUpdateDTO updateDTO, Long id){
+
+    public OrderDTO update(OrderUpdateDTO updateDTO, Long id) {
         var order = repository.findById(id).orElseThrow();
-        mapper.update(updateDTO,order);
+        mapper.update(updateDTO, order);
         repository.save(order);
         return mapper.map(order);
     }

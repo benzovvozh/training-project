@@ -11,5 +11,5 @@ import java.util.List;
 @Setter
 public class OrderUpdateDTO {
     JsonNullable<OrderStatus> status;
-    JsonNullable<List<Long>> productsIds;
+    JsonNullable<List<Long>> productsId;
 }

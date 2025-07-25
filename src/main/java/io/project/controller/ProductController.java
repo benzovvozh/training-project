@@ -6,6 +6,7 @@ import io.project.DTO.product.ProductUpdateDTO;
 import io.project.service.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,9 +21,13 @@ public class ProductController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<List<ProductDTO>> showAll() {
+    public ResponseEntity<List<ProductDTO>> showAll(
+            @RequestParam(required = false) Integer price,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int limit
+    ) {
         return ResponseEntity.ok()
-                .body(service.getAll());
+                .body(service.getProductWithPrice(price, PageRequest.of(page, limit)));
     }
 
     @GetMapping("/{id}")
@@ -45,7 +50,7 @@ public class ProductController {
     @PutMapping("/{id}")
     public ProductDTO update(@PathVariable("id") Long id,
                              @Valid @RequestBody ProductUpdateDTO updateDTO) {
-        return service.update(updateDTO,id);
+        return service.update(updateDTO, id);
     }
 
 
