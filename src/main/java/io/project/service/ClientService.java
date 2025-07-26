@@ -1,14 +1,17 @@
 package io.project.service;
 
 import io.project.DTO.client.ClientCreateDTO;
+import io.project.DTO.client.ClientCreateEvent;
 import io.project.DTO.client.ClientDTO;
 import io.project.DTO.client.ClientUpdateDTO;
+import io.project.DTO.product.ProductCreatedEvent;
 import io.project.mapper.ClientMapper;
 import io.project.model.Client;
 import io.project.repository.ClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,6 +19,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class ClientService {
+    @Autowired
+    private KafkaTemplate<String, ClientCreateEvent> kafkaTemplate;
     @Autowired
     private ClientRepository repository;
 
@@ -33,6 +38,12 @@ public class ClientService {
     public ClientDTO create(ClientCreateDTO clientCreateDTO) {
         var client = mapper.map(clientCreateDTO);
         repository.save(client);
+        ClientCreateEvent clientCreateEvent = new ClientCreateEvent(
+                clientCreateDTO.getFirstName(),
+                clientCreateDTO.getLastName(),
+                clientCreateDTO.getEmail(),
+                clientCreateDTO.getTelephoneNumber());
+        kafkaTemplate.send("client-created-event-topic", String.valueOf(client.getId()), clientCreateEvent);
         return mapper.map(client);
     }
 

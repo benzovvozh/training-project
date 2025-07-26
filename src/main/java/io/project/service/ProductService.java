@@ -1,6 +1,7 @@
 package io.project.service;
 
 import io.project.DTO.product.ProductCreateDTO;
+import io.project.DTO.product.ProductCreatedEvent;
 import io.project.DTO.product.ProductDTO;
 import io.project.DTO.product.ProductUpdateDTO;
 import io.project.mapper.ProductMapper;
@@ -9,12 +10,15 @@ import io.project.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class ProductService {
+    @Autowired
+    private KafkaTemplate<String, ProductCreatedEvent> kafkaTemplate;
     @Autowired
     private ProductRepository repository;
     @Autowired
@@ -35,6 +39,12 @@ public class ProductService {
     public ProductDTO create(ProductCreateDTO createDTO) {
         var product = mapper.map(createDTO);
         repository.save(product);
+        ProductCreatedEvent productCreatedEvent = new ProductCreatedEvent(
+                product.getId(),
+                product.getTitle(),
+                product.getDescription(),
+                product.getPrice());
+        kafkaTemplate.send("product-created-event-topic", String.valueOf(product.getId()),productCreatedEvent);
         return mapper.map(product);
     }
 
