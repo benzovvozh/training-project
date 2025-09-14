@@ -1,0 +1,55 @@
+version: "3.9"
+
+services:
+  crm-service:
+    build: ./CRM
+    depends_on:
+      - postgres-crm
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-crm:5432/postgres_db
+      SPRING_DATASOURCE_USERNAME: postgres_user
+      SPRING_DATASOURCE_PASSWORD: postgres_password
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    restart: unless-stopped
+
+  postgres-crm:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres_user
+      POSTGRES_PASSWORD: postgres_password
+      POSTGRES_DB: postgres_db
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./pgdata-crm:/var/lib/postgresql/data/pgdata
+
+
+  subscriptions-service:
+    build: ./SubscribtionsService
+    ports:
+      - "8081:8081"
+    depends_on:
+      - postgres-subscriptions
+      - crm-service
+    environment:
+      CRM_SERVICE_URL: http://crm-service:8080
+      SUB_DATASOURCE_URL: jdbc:postgresql://postgres-subscriptions:5432/postgres_db_sub
+      SUB_DATASOURCE_USERNAME: sub
+      SUB_DATASOURCE_PASSWORD: qwerty
+      SUB_JPA_HIBERNATE_DDL_AUTO: update
+    restart: unless-stopped
+
+  postgres-subscriptions:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: sub
+      POSTGRES_PASSWORD: qwerty
+      POSTGRES_DB: postgres_db_sub
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./pgdata-subs:/var/lib/postgresql/data/pgdata
