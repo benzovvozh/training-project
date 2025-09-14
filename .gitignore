@@ -1,0 +1,12 @@
+# IDE
+.idea/
+*.iml
+
+# Gradle
+.gradle/
+build/
+
+# Docker volumes
+pgdata/
+pgdata-crm/
+pgdata-subs/
