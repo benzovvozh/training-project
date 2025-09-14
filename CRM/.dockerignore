@@ -1,0 +1,13 @@
+# IDE/Gradle кэш
+.idea
+.gradle
+tmp
+out
+*.iml
+
+# VCS
+.git
+.gitignore
+
+# OS
+.DS_Store
